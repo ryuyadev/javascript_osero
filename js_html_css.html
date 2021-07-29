@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>osero</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+    <style type="text/css">
+      *{
+        margin: 0;
+      }
+
+      html{
+        background-color: rgb(13, 102, 48);
+        height: 800px;
+        width: 1400px;
+      }
+
+      body{
+        background-color: rgb(13, 102, 48);
+        border: 15px solid white;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      header{
+        font-family: 'Lexend', sans-serif;
+        display: flex;
+        height: 18%;
+        width: 100%;
+        text-align: center;
+      }
+
+      .header_score{
+        background-color: white;
+        flex-grow: 1;
+        margin-top: 2%;
+        height: 30%;
+        width: 76%;
+      }
+
+      .header_list{
+        display: flex;
+        flex-grow: 1;
+        margin: 0 3%;
+        margin-top: 1%;
+        height: 50%;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      label{
+        background-color: rgb(13, 102, 48);
+        margin: 0 1em;
+        padding: 0em 0.5em 0.2em 0.5em;
+        border: 0.5px solid white;
+        color: white;
+        cursor: pointer;
+      }
+
+      label:hover{
+        background-color: white;
+        border: 0.5px solid white;
+        color: rgb(13, 102, 48);
+      }
+
+      main{
+        height: 64%;
+        width: 100%;
+      }
+
+        .flexcontainer{
+          display: flex;
+          margin: 0 5%;
+          height: 100%;
+          width: 90%;
+        }
+
+        .flexitem1{
+          display: flex;
+          flex-grow: 1;
+          width: 50%;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .rogo_area{
+          font-family: 'Noto Sans', sans-serif;
+          color: white;
+          letter-spacing: 1.5em;
+        }
+
+        .title{
+          font-size: 100px;
+          font-weight: 400;
+        }
+
+        button{
+          background-color: white;
+          color: rgb(13, 102, 48);
+          margin-top: 3em;
+          width: 100%;
+          height: 35px;
+          text-align: center;
+          cursor: pointer;
+          border: none;
+        }
+
+        .flexitem2{
+          display: flex;
+          flex-grow: 1;
+          height: 100%;
+          width: 50%;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+
+        .content_area{
+        }
+
+        .board{
+          border-collapse: collapse;
+          margin: 0 auto;
+          padding: 0;
+          table-layout: fixed;
+        }
+
+        tr{
+          border-bottom: 1px solid white;
+        }
+
+        tr:last-child{
+          border-bottom: none;
+        }
+
+        td{
+          color: white;
+          width: 50px;
+          height: 50px;
+          text-align:  center;
+          vertical-align: middle;
+          table-layout: fixed;
+          border-right: 1px solid white;
+          font-size: 2em;
+        }
+
+        td:last-child{
+          border: none;
+        }
+
+        td:hover{
+          background-color: rgb(33, 139, 75);
+        }
+
+
+      footer{
+        font-family: 'Lexend', sans-serif;
+        height: 18%;
+        width: 100%;
+        text-align: center;
+      }
+
+      .msg_zone{
+        background-color: rgb(13, 102, 48);
+        color: white;
+        margin-top: 3%;
+        margin-left: 5%;
+        margin-right: 5%;
+        border: 1px solid white;
+        text-align: center;
+        color: white;
+        line-height: 3em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header_score">
+        <p class="point" id="black_cnt" style="color:white;"></p>
+        <p class="point" id="white_cnt" style="color:white;"></p>
+      </div>
+      <div class="header_list">
+        <form  name="test">
+          <label for="selfile1">
+            import log
+            <input style="display:none;" type="file" id="selfile1" onclick="file_init">
+          </label>
+        </form>
+        <form  name="test2">
+          <label for="selfile2">
+            export log
+            <input style="display:none;" type="file" id="selfile2" onclick="file_init">
+          </label>
+        </form>
+      </div>
+    </header>
+    <main>
+      <div class="flexcontainer">
+        <div class="flexitem1">
+          <div class="rogo_area">
+            <p class="title">THE<br>OSERO</p>
+            <button type="button" class="board_init" id="board_init" onclick="board_init()">RESTART　▶︎</button>
+          </div>
+        </div>
+        <div class="flexitem2">
+          <div class="content_area">
+            <table class="board" id="board"></table>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="msg_zone">
+        <p id="view_msg"></p>
+      </div>
+    </footer>
+
+
+    <script type="text/javascript">
+      // 定義
+      // 定数
+      const black="1";
+      const white="-1";
+      const flg_on="1";
+      const flg_off="0";
+      const black_turn_msg="Black turn.";
+      const white_turn_msg="White turn.";
+      const draw_msg="Draw.";
+      const white_won_msg="White won.";
+      const black_won_msg="Black won.";
+      const white_turn_again_msg="続けて白の番です";
+      const black_turn_again_msg="続けて黒の番です";
+      const question_msg="？";
+      // 変数
+      let turn=0;// ターン(白：-1、黒：1)
+      let white_cnt = 2;// 白石の数
+      let white_cnt_msg=document.getElementById('white_cnt');
+      let black_cnt = 2;// 黒石の数
+      let black_cnt_msg=document.getElementById('black_cnt');
+      let board=document.getElementById('board');// 盤面
+      let board_ar=new Array(8);// 盤面テーブル
+      for (let x=0;x<board_ar.length;x++){
+        board_ar[x]=new Array(8);
+      }
+
+      // 初期処理
+      init();
+
+      // 盤面クリック時の処理
+      click_board();
+
+      // ファイル選択時の処理
+      sel_file();
+
+      //初期処理
+      function init(){
+        // 盤面生成
+        board_new();
+        // 初期化
+        board_init();
+      }
+
+      // 盤面生成
+      function board_new() {
+        for(let x=0;x<8;x++){
+          let tr=document.createElement("tr");
+          board.appendChild(tr);
+          for(let y=0;y<8;y++){
+            let td=document.createElement("td");
+            tr.appendChild(td);
+          }
+        }
+      }
+
+      // 初期化
+      function board_init(){
+        // 盤面初期化
+        for(let x=0;x<8;x++){
+          for(let y=0;y<8;y++){
+            board_ar[x][y]=0;
+          }
+        }
+
+        // 石配置初期化
+        // 初期状態は真ん中に白黒を配置
+        board_ar[3][3]=parseInt(white);
+        board_ar[4][3]=parseInt(black);
+        board_ar[3][4]=parseInt(black);
+        board_ar[4][4]=parseInt(white);
+        board_set();
+
+        //カウンター初期化
+        white_cnt = 2;
+        black_cnt = 2;
+        white_cnt_msg.textContent=white_cnt;
+        black_cnt_msg.textContent=black_cnt;
+
+        // ターン初期化
+        turn=0;
+        change_turn(flg_off);
+
+        // 選択ファイル初期化
+        document.getElementById("selfile1").value="";
+      }
+
+      //盤面クリック時の処理
+      function click_board(){
+        //クリック時のイベント
+        for (let x=0;x<8;x++){
+          for (let y=0;y<8;y++){
+            let select_cell=board.rows[x].cells[y];
+            select_cell.onclick=function(){
+              if (board_ar[this.parentNode.rowIndex][this.cellIndex]==0){
+                if (stone_reverse(this.parentNode.rowIndex,this.cellIndex,flg_off)>0) {
+                  board_set();
+                  change_turn(flg_off);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // ファイル選択時の処理
+      function sel_file(){
+        let sel_file=document.getElementById("selfile1");// 選択ファイル
+
+        // ダイアログでファイルが選択された時
+        sel_file.addEventListener("change",
+        function(e1){
+          let file=e1.target.files;
+          let reader=new FileReader();// filereader
+          reader.readAsText(file[0]);
+
+          // 読込終了後の処理
+          reader.onload = function(){
+            let file_ar=new Array();// ファイル格納用
+            let file_dam_ar=new Array();// ファイル一時格納用
+
+            file_dam_ar=reader.result.split('\n');// 改行区切り
+            // 読み込みファイルを一行づつ処理
+            for(let x=1;x<file_dam_ar.length;x++){
+              file_ar[x-1]=new Array();
+              let file_row_ar=new Array();// ファイル一行格納用
+              file_row_ar=file_dam_ar[x].split(' ');// 空白区切り
+              // 一行を１文字づつ処理
+              for(let y=0;y<file_row_ar.length;y++){
+                file_ar[x-1][y]=file_row_ar[y];
+              }
+            }
+
+            for(let x=0;x<file_ar.length;x++){
+              switch (file_ar[x][0]) {
+                case "B":
+                  board_ar[file_ar[x][1]-1][file_ar[x][2]-1]=black;
+                  break;
+                case "W":
+                  board_ar[file_ar[x][1]-1][file_ar[x][2]-1]=white;
+                  break;
+              }
+              if(stone_reverse(file_ar[x][1]-1,file_ar[x][2]-1,flg_off)>0){
+                board_set()
+                change_turn(flg_on)
+              }
+            }
+          }
+        }
+        ,false);
+      }
+
+      // 盤面テーブルを盤面に反映
+      function board_set(){
+        let stone="";
+        for(let x=0;x<8;x++){
+          for(let y=0;y<8;y++){
+            switch (board_ar[x][y]) {
+              case 0://空白
+                stone="";
+                break;
+              case parseInt(black):
+                stone="●";
+                  break;
+              case parseInt(white):
+                stone="○";
+                break;
+            }
+            board.rows[x].cells[y].innerText=stone;
+          }
+        }
+      }
+
+      // ターン変更
+      function change_turn(alert_flg){
+        let view_msg=document.getElementById('view_msg');//出力メッセージ
+        let check_reverse_cnt=0;//自分の石が置けるマス数
+        let end_flg=flg_off;//決着フラグ
+
+        // 初回の場合
+        if(turn==0){
+          turn=parseInt(black);
+          view_msg.textContent=black_turn_msg;
+          return;
+        }
+
+        // 初回以降の場合
+        turn*=-1;
+
+        // 左端からすべてのマスの確認を行う
+        white_cnt = 0;
+        black_cnt = 0;
+        for (let x = 0; x < 8; x++) {
+          for (let y = 0; y < 8; y++) {
+            // 空白は置けるマスとしてカウント
+            // 空白以外は石の数を加算
+            switch( board_ar[x][y] ) {
+              case 0://空白
+                //自分の石が置ける場合はカウント
+                check_reverse_cnt+=stone_reverse(x,y,flg_on);
+                break;
+              case parseInt(black):
+                black_cnt++;
+                break;
+              case parseInt(white):
+                white_cnt++;
+                break;
+            }
+          }
+        }
+        //白黒の合計が64の場合終了
+        if (white_cnt+black_cnt==64||white_cnt==0||black_cnt==0) {
+          if (white_cnt==black_cnt) {
+            if(alert_flg==flg_on){
+              alert(("00"+black_cnt).slice(-2)+"-"+("00"+white_cnt).slice(-2)+" Draw!");
+            }
+            view_msg.textContent=draw_msg;
+            end_flg=flg_on;
+          }else if(white_cnt>black_cnt){
+            if(alert_flg==flg_on){
+              alert(("00"+black_cnt).slice(-2)+"-"+("00"+white_cnt).slice(-2)+" The white won!");
+            }
+            view_msg.textContent=white_won_msg;
+            end_flg=flg_on;
+          }else{
+            if(alert_flg==flg_on){
+              alert(("00"+black_cnt).slice(-2)+"-"+("00"+white_cnt).slice(-2)+" The black won!");
+            }
+            view_msg.textContent=black_won_msg;
+            end_flg=flg_on;
+          }
+        }else{
+          if(check_reverse_cnt==0){
+            switch (turn) {
+              case parseInt(black):
+                view_msg.textContent=white_turn_again_msg;
+                turn*=-1;
+                break;
+              case parseInt(white):
+                view_msg.textContent=black_turn_again_msg;
+                turn*=-1;
+                break;
+            }
+          }
+        }
+        //ターン表示
+        if(white_cnt+black_cnt<50||white_cnt+black_cnt==64){
+          white_cnt_msg.textContent=white_cnt;
+          black_cnt_msg.textContent=black_cnt;
+        }else{
+          white_cnt_msg.textContent=question_msg;
+          black_cnt_msg.textContent=question_msg;
+        }
+
+        if(end_flg==flg_off){
+          switch (turn) {
+            case parseInt(black):
+              view_msg.textContent=black_turn_msg;
+              break;
+            case parseInt(white):
+              view_msg.textContent=white_turn_msg;
+              break;
+          }
+        }
+      }
+
+      //指定したセルにターン側の石が置けるか確認
+      function stone_reverse(row_index,cell_index,check_flg){
+        let reverse_cnt=0;
+        //全方向へリバースできるか確認
+        for (let i=-1;i<2;i++){
+          for (let j=-1;j<2;j++){
+            if (i==0 && j==0){
+              continue;
+            }
+            reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,i,j);  //上            
+          }
+        }
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,-1,1);  //右上
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,0,1);   //右
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,1,1);   //右下
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,1,0);   //下
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,1,-1);  //左下
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,0,-1);  //左
+        // reverse_cnt=reverse_cnt+line_reverse(row_index,cell_index,check_flg,-1,-1); //左上
+        return reverse_cnt;
+      }
+
+      // 指定したセルから指定した方向へリバースを行う
+      // ※check_flgがonの場合は盤面の更新は行わずカウントのみ
+      function line_reverse(row_index,cell_index,check_flg,add_x,add_y){
+        let line_reverse_cnt=0;//裏返した数
+        let sand_flg=0;//自分の石で挟んだフラグ
+        let xx=row_index;//盤面のx軸
+        let yy=cell_index;//盤面のy軸
+        let board_bak=new Array(8);//盤面テーブル(バックアップ用)
+        for(let i=0;i<board_ar.length;i++){
+          board_bak[i]=new Array(8);
+        }
+
+        //盤面テーブルを退避
+        for(let x=0;x<8;x++){
+          for(let y=0;y<8;y++){
+            board_bak[x][y]=board_ar[x][y];
+          }
+        }
+
+        while(true){
+          xx+=add_x;
+          yy+=add_y;
+          //盤の端に到達したら抜ける
+          if(xx<0||xx>7||yy<0||yy>7){
+            break;
+          }
+          //移動先のセルに石がなかったら抜ける
+          if(board_ar[xx][yy]==0){
+            break;
+          }
+          // 移動先のセルが自分の石であれば挟めるとして抜ける
+          if(board_ar[xx][yy]==turn){
+            sand_flg=flg_on;
+            break;
+          }
+          //上記以外は相手の石なので、裏返して件数を加算
+          if(check_flg==flg_off){
+            board_ar[xx][yy]*=-1;
+          }
+          line_reverse_cnt++;
+        }
+
+        // 裏返したが移動先に自分の石がなかった場合は元に戻す
+        if(line_reverse_cnt>0){
+          if(sand_flg==0){
+            for(let x=0;x<8;x++){
+              for(let y=0;y<8;y++){
+                board_ar[x][y]=board_bak[x][y];
+                line_reverse_cnt=0;
+              }
+            }
+          }else{
+            //裏返せたら自分の石を置く
+            if(check_flg==flg_off){
+              board_ar[row_index][cell_index]=turn;
+            }
+          }
+        }
+        return line_reverse_cnt;
+      }
+    </script>
+
+  </body>
+</html>
